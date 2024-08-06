@@ -1,20 +1,34 @@
 """
 Compares time complexity of Insertion Sort,
-Merge Sort and Tim Sort algorithms.
+Merge Sort and Tim Sort algorithms
+
+Example of relusts for list with int elements:
+'Insert Sort' for '20000' elments takes '4746' ms
+'Merge Sort' for '20000' elments takes '204' ms
+'Tim Sort' for '20000' elments takes '1' ms
+
+Tim Sort is the most effective sorting algorithm.
 """
 import random
-# from timeit import timeit
 import timeit
 
 
-def _insert_sort(lst: list) -> None:
-    for i in range(1, len(lst)):
-        cur = lst[i]
+def _lst(num: int) -> list:
+    res: list = []
+    for _ in range(num):
+        res.append(random.randint(0, 99))
+
+    return res
+
+
+def _insert_sort(src: list) -> None:
+    for i in range(1, len(src)):
+        cur = src[i]
         j: int = i - 1
-        while j >= 0 and cur < lst[j]:
-            lst[j+1] = lst[j]
+        while j >= 0 and cur < src[j]:
+            src[j+1] = src[j]
             j -= 1
-        lst[j+1] = cur
+        src[j+1] = cur
 
 
 def _merge_sort(src: list) -> list:
@@ -54,22 +68,18 @@ def _merge_sort(src: list) -> list:
     return tgt
 
 
-def _src(num: int) -> list:
-    res: list = []
-    for _ in range(num):
-        res.append(random.randint(0, 99))
-
-    return res
-
-def _measure_sort(name: str, func: callable, src: list = None) -> None:
-    seconds = timeit.timeit(lambda: func(src) if src else func(), number=10)
+def _measure(name: str, src: list, func: callable = None) -> None:
+    seconds = timeit.timeit(lambda: func(src) if func else src.sort(), number=10)
     millis = int(seconds * 1000)
     print(f"{name} for '{len(src)}' elments takes '{millis}' ms")
 
-if __name__ == "__main__":
-    lst_size: int = 10_000
-    src: list = _src(lst_size)
 
-    _measure_sort("Insert Sort", _insert_sort, src)
-    _measure_sort("Merge Sort", _measure_sort, src)
-    _measure_sort(name = "Tim Sort", func = src.sort)
+if __name__ == "__main__":
+    lst_size: int = 20_000
+
+    lst = _lst(lst_size)
+    _measure("Insert Sort", lst, _insert_sort)
+    lst = _lst(lst_size)
+    _measure("Merge Sort", lst, _merge_sort)
+    lst = _lst(lst_size)
+    _measure("Tim Sort", lst)
